@@ -13,6 +13,9 @@ module.exports = {
       minWidth: {
         screen: '100vw'
       },
+      maxHeight: {
+        screen: '100vh'
+      },
       borderWidth: {
         1: '1px'
       }

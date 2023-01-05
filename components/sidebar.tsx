@@ -1,11 +1,14 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import BaseInput from "./baseInput";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import Chat from "./chat";
+import { getChatBuddyEmail } from "../utils/getChatBuddyEmail";
+import * as EmailValidator from 'email-validator';
+import BaseButton from "./baseButton";
 
 export interface IChatBuddy {
   email: string;
@@ -20,21 +23,22 @@ const Sidebar = () => {
   const { email, photoURL } = user || {};
   const chatsRef = collection(db, 'chats');
 
-  useEffect(() => {
-    async function getUserChatBuddies() {
-      const userChatBuddiesQuery = query(chatsRef, where('users', 'array-contains', email));
-      const userChatBuddiesQuerySnapshot = await getDocs(userChatBuddiesQuery);
-      const tempChatBuddies: IChatBuddy[] = [];
-      userChatBuddiesQuerySnapshot.forEach(chatBuddy => {
-        const [firstEmail, secondEmail] = chatBuddy.data().users;
-        tempChatBuddies.push({
-          email: firstEmail === email ? secondEmail : firstEmail,
-          chatId: chatBuddy.id
-        });
+
+  const getUserChatBuddies = async () => {
+    const userChatBuddiesQuery = query(chatsRef, where('users', 'array-contains', email));
+    const userChatBuddiesQuerySnapshot = await getDocs(userChatBuddiesQuery);
+    const tempChatBuddies: IChatBuddy[] = [];
+    userChatBuddiesQuerySnapshot.forEach(chatBuddy => {
+      tempChatBuddies.push({
+        email: getChatBuddyEmail(chatBuddy.data().users, email || ''),
+        chatId: chatBuddy.id
       });
-      setChatBuddies(tempChatBuddies);
-      setFilteredChatBuddies(tempChatBuddies);
-    }
+    });
+    setChatBuddies(tempChatBuddies);
+    setFilteredChatBuddies(tempChatBuddies);
+  }
+
+  useEffect(() => {
     getUserChatBuddies();
   }, []);
 
@@ -50,8 +54,30 @@ const Sidebar = () => {
     setFilteredChatBuddies(tempChatBuddies);
   }, [chatBuddiesQuery]);
 
+  const createNewChat = async () => {
+    const input = prompt('Please enter an email address for the user you wish to chat with');
+    if (!input) {
+      return;
+    }
+    if (EmailValidator.validate(input) && !chatAlreadyExist(input) && input !== email) {
+      await addDoc(collection(db, 'chats'), {
+        users: [email, input]
+      });
+      getUserChatBuddies();
+    }
+  };
+
+  const chatAlreadyExist = (newChatBuddyEmail: string) => {
+    chatBuddies.forEach(chatBuddy => {
+      if (chatBuddy.email === newChatBuddyEmail) {
+        return true;
+      }
+    });
+    return false;
+  }
+
   return (
-      <div className='w-80 h-full border-r-1'>
+      <div className='w-80 h-full border-r-1 max-h-screen overflow-y-scroll'>
         <div className='p-4 border-b-1 border-secondary bg-primary flex items-center'>
           {
             photoURL ? (
@@ -60,7 +86,7 @@ const Sidebar = () => {
               <Avatar className='cursor-pointer' onClick={() => auth.signOut()}>{email?.[0] || ''}</Avatar>
             )
           }
-          <p className='ml-2 font-bold'>{email}</p>
+          <p className='ml-2 font-bold break-all'>{email}</p>
         </div>
         <div className='flex items-center border-b-1 border-secondary px-2'>
           <SearchIcon />
@@ -70,6 +96,14 @@ const Sidebar = () => {
             value={chatBuddiesQuery}
             handleChange={(e: React.ChangeEvent<HTMLInputElement>) => setChatBuddiesQuery(e.target.value)}
           />
+        </div>
+        <div className='border-b-1 border-secondary'>
+          <BaseButton
+            customClassName='w-full'
+            handleClick={createNewChat}
+          >
+            Start a new chat
+          </BaseButton>
         </div>
         <div>
           {

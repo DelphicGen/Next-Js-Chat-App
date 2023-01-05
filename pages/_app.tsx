@@ -5,6 +5,7 @@ import { auth, db } from '../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
 import Login from './login';
+import Loading from '../components/loading';
 
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -25,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [user]);
 
   if (loading) {
-    return <div>loading</div>
+    return <Loading />
   }
 
   if (!user) {

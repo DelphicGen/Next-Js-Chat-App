@@ -1,10 +1,11 @@
-const BaseButton  = ({ children, handleClick }: { 
+const BaseButton  = ({ customClassName, children, handleClick }: {
+  customClassName?: string; 
   children: JSX.Element | string;
   handleClick: () => void;
 }) => {
   return (
     <button
-      className='button button--yellow'
+      className={`button button--yellow ${customClassName || ''}`}
       onClick={handleClick}
     >
       {children}
