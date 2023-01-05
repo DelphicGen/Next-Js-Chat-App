@@ -10,6 +10,12 @@ module.exports = {
         primary: '#FDD200',
         secondary: '#40825C'
       },
+      minWidth: {
+        screen: '100vw'
+      },
+      borderWidth: {
+        1: '1px'
+      }
     },
   },
   plugins: [],

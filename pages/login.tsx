@@ -8,7 +8,6 @@ const Login = () => {
   const signIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log('hahaha ', result)
         GoogleAuthProvider.credentialFromResult(result);
       }).catch((error) => {
         console.error(error);
@@ -22,7 +21,11 @@ const Login = () => {
       </Head>
       <div className={`h-screen ${styles.login}`}>
         <div className='h-full bg-gray-800/50 flex justify-center items-center'>
-          <BaseButton text='Sign in with Google' handleClick={signIn} />
+          <BaseButton
+            handleClick={signIn}
+          >
+            Sign in with Google
+          </BaseButton>
         </div>
       </div>
     </>

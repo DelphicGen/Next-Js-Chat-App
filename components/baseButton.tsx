@@ -1,5 +1,5 @@
-const BaseButton  = ({ text, handleClick }: { 
-  text: string;
+const BaseButton  = ({ children, handleClick }: { 
+  children: JSX.Element | string;
   handleClick: () => void;
 }) => {
   return (
@@ -7,7 +7,7 @@ const BaseButton  = ({ text, handleClick }: {
       className='button button--yellow'
       onClick={handleClick}
     >
-      {text}
+      {children}
     </button>
   )
 }
