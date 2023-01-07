@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Sidebar from "../../components/sidebar";
-import { DocumentData, collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import { DocumentData, collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getChatBuddyEmail } from "../../utils/getChatBuddyEmail";
@@ -11,19 +11,19 @@ const Chat = ({ messages, users }: {
   users: string[];
 }) => {
 
-  const [user, _] = useAuthState(auth);
-  const {email} = user || {};
+  const [loggedInUser, _] = useAuthState(auth);
+  const {email} = loggedInUser || {};
 
   return (
-    <>
+    <div className='overflow-x-scroll'>
       <Head>
         <title>Chat with {getChatBuddyEmail(users, email || '')}</title>
       </Head>
       <div className='overflow-x-scroll min-w-screen h-screen flex'>
         <Sidebar />
-        <ChatScreen messages={messages} users={users}  />
+        <ChatScreen users={users}  />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -35,7 +35,7 @@ export const getServerSideProps = async (context: { query: { id: string; }; }) =
   const users = chatsSnapshot?.data()?.users;
 
   const messagesRef = collection(db, 'chats', context?.query?.id, 'messages');
-  const messagesQuery = query(messagesRef);
+  const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
   const messagesSnapshot = await getDocs(messagesQuery);
   const messages: DocumentData[] = [];
   messagesSnapshot?.forEach(message => {

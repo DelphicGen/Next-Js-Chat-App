@@ -19,8 +19,8 @@ const Sidebar = () => {
   const [chatBuddies, setChatBuddies] = useState<IChatBuddy[]>([]);
   const [filteredChatBuddies, setFilteredChatBuddies] = useState<IChatBuddy[]>([]);
   const [chatBuddiesQuery, setChatBuddiesQuery] = useState('');
-  const [user, _] = useAuthState(auth);
-  const { email, photoURL } = user || {};
+  const [loggedInUser, _] = useAuthState(auth);
+  const { email, photoURL } = loggedInUser || {};
   const chatsRef = collection(db, 'chats');
 
 
@@ -77,8 +77,8 @@ const Sidebar = () => {
   }
 
   return (
-      <div className='w-80 h-full border-r-1 max-h-screen overflow-y-scroll'>
-        <div className='p-4 border-b-1 border-secondary bg-primary flex items-center'>
+      <div className='min-w-96 max-w-96 h-full border-r-1 border-secondary max-h-screen overflow-y-scroll'>
+        <div className='p-5 border-b-1 border-secondary bg-primary flex items-center'>
           {
             photoURL ? (
               <Avatar src={photoURL} className='cursor-pointer' onClick={() => auth.signOut()} />

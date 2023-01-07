@@ -9,27 +9,27 @@ import Loading from '../components/loading';
 
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [user, loading] = useAuthState(auth);
+  const [loggedInUser, loading] = useAuthState(auth);
 
   useEffect(() => {
     async function addUserToUsersCollection() {
-      const { email, photoURL, uid = '' } = user || {};
+      const { email, photoURL, uid = '' } = loggedInUser || {};
       await setDoc(doc(db, 'users', uid), {
         email,
         photoURL,
         lastSeen: serverTimestamp()
       });
     }
-    if (user?.uid) {
+    if (loggedInUser?.uid) {
       addUserToUsersCollection();
     }
-  }, [user]);
+  }, [loggedInUser]);
 
   if (loading) {
     return <Loading />
   }
 
-  if (!user) {
+  if (!loggedInUser) {
     return <Login />;
   }
 

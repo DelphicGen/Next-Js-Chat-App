@@ -11,7 +11,11 @@ module.exports = {
         secondary: '#40825C'
       },
       minWidth: {
+        96: '384px',
         screen: '100vw'
+      },
+      maxWidth: {
+        96: '384px',
       },
       maxHeight: {
         screen: '100vh'

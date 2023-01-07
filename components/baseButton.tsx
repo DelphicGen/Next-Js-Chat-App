@@ -1,5 +1,6 @@
-const BaseButton  = ({ customClassName, children, handleClick }: {
+const BaseButton  = ({ customClassName, disabled = false, children, handleClick }: {
   customClassName?: string; 
+  disabled?: boolean;
   children: JSX.Element | string;
   handleClick: () => void;
 }) => {
@@ -7,6 +8,7 @@ const BaseButton  = ({ customClassName, children, handleClick }: {
     <button
       className={`button button--yellow ${customClassName || ''}`}
       onClick={handleClick}
+      disabled={disabled}
     >
       {children}
     </button>

@@ -1,8 +1,9 @@
-const BaseInput = ({ customClassName, name, value, handleChange }: {
+const BaseInput = ({ customClassName, name, value, handleChange, handleKeyDown }: {
   customClassName: string;
   name: string;
   value: string;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) => {
   return (
     <input
@@ -10,6 +11,7 @@ const BaseInput = ({ customClassName, name, value, handleChange }: {
       name={name}
       value={value}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
     />
   )
 }
